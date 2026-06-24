@@ -1,20 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putall.c                                        :+:      :+:    :+:   */
+/*   ft_print_char.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hegoncal <hegoncal@student.42.fr>          #+#  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026-06-23 21:23:05 by hegoncal          #+#    #+#             */
-/*   Updated: 2026-06-23 21:23:05 by hegoncal         ###   ########.fr       */
+/*   Created: 2026-07-13 11:48:03 by hegoncal          #+#    #+#             */
+/*   Updated: 2026-07-13 11:48:03 by hegoncal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	ft_printf_char(char c);
+int	ft_print_char(char c);
 
-int	ft_printf_char(char c)
+int	ft_print_char(char c)
 {
 	write(1, &c, 1);
 	return (1);

@@ -1,0 +1,6 @@
+conf_code/.config/Code/*
+conf_code/.vscode/*
+
+!conf_code/.config/Code/User/settings.json
+!conf_code/.config/Code/User/keybindings.json
+conf_code/.vscode/extensions.json
