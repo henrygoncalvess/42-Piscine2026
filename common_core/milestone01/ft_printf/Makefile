@@ -7,7 +7,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I includes
 
 #   $(wildcard src/ft_*.c)
-#   ls | sed 's/\.c/\.c\ \\/'
+#   find . -name "*.c" | sed "s/\.\///" | sed "s/\.c/\.c \\\/"
 SRCS = src/ft_print_char.c \
 	src/ft_print_conversion.c \
 	src/ft_printf.c \
