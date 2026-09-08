@@ -1,0 +1,126 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   push_swap.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pahenriq <pahenriq@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/08/09 12:59:35 by pahenriq          #+#    #+#             */
+/*   Updated: 2026/08/23 15:53:26 by pahenriq         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef PUSH_SWAP_H
+# define PUSH_SWAP_H
+
+# include "libft.h"
+# include <limits.h>
+# include <stdlib.h>
+# include <unistd.h>
+
+typedef struct s_node
+{
+	int				value;
+	int				rank;
+	struct s_node	*next;
+	struct s_node	*prev;
+}					t_node;
+
+typedef enum e_strategy
+{
+	SIMPLE,
+	MEDIUM,
+	COMPLEX,
+	ADAPTIVE,
+	STRATEGY_COUNT
+}					t_strategy;
+
+typedef enum e_chunk
+{
+	LOW,
+	HIGH,
+	CHUNK_COUNT
+}					t_chunk_strategy;
+
+typedef struct s_op_count
+{
+	int				sa;
+	int				sb;
+	int				ss;
+	int				pa;
+	int				pb;
+	int				ra;
+	int				rb;
+	int				rr;
+	int				rra;
+	int				rrb;
+	int				rrr;
+}					t_op_count;
+
+typedef struct s_ps
+{
+	t_node			*a;
+	t_node			*b;
+	int				size_a;
+	int				size_b;
+	float			disorder;
+	t_strategy		strategy;
+	t_strategy		adap_strategy;
+	int				bench_mode;
+	t_op_count		operations;
+}					t_ps;
+
+typedef void		(*t_fn)(t_ps *ps);
+
+int					parse_args(int argc, char **argv, t_ps *ps);
+
+t_node				*node_new(int value);
+void				stack_clear(t_node **top);
+int					stack_size(t_node *top);
+int					is_sorted(t_node *top);
+void				normalize_stack(t_node *top);
+
+void				node_push_top(t_node **top, t_node *node);
+void				node_push_bottom(t_node **top, t_node *node);
+t_node				*node_pop_top(t_node **top);
+void				stack_swap_top(t_node **top);
+t_node				*stack_last(t_node *top);
+void				stack_rotate(t_node **top);
+void				stack_reverse_rotate(t_node **top);
+int					get_index(t_ps *ps, int current_value);
+void				print_disorder(float disorder, int fd);
+
+void				op_sa(t_ps *ps);
+void				op_sb(t_ps *ps);
+void				op_ss(t_ps *ps);
+void				op_pa(t_ps *ps);
+void				op_pb(t_ps *ps);
+void				op_ra(t_ps *ps);
+void				op_rb(t_ps *ps);
+void				op_rr(t_ps *ps);
+void				op_rra(t_ps *ps);
+void				op_rrb(t_ps *ps);
+void				op_rrr(t_ps *ps);
+
+float				calculate_disorder(t_node *top);
+
+void				run_simple(t_ps *ps);
+void				run_medium(t_ps *ps);
+void				run_complex(t_ps *ps);
+
+void				base_three_a(t_ps *ps);
+void				base_three_b(t_ps *ps);
+void				base_five_a(t_ps *ps);
+void				base_five_b(t_ps *ps);
+
+int					handle_base_a(t_ps *ps, int size);
+int					handle_base_b(t_ps *ps, int size);
+
+t_fn				select_strategy(t_ps *ps);
+void				dispatch_strategy(t_ps *ps);
+
+void				print_disorder(float disorder, int fd);
+void				print_strategy(t_strategy s, t_strategy a, int fd);
+void				print_bench(t_ps *ps);
+
+#endif
