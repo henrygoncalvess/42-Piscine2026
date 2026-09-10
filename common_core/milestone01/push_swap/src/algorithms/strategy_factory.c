@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   strategy_factory.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pahenriq <pahenriq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hegoncal <hegoncal@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 13:02:06 by pahenriq          #+#    #+#             */
-/*   Updated: 2026/08/23 15:50:36 by pahenriq         ###   ########.fr       */
+/*   Updated: 2026/09/09 21:55:41 by hegoncal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,11 @@ float	calculate_disorder(t_node *top)
 
 t_fn	select_strategy(t_ps *ps)
 {
+	if (ps->size_a == 3 || ps->size_a == 5)
+	{
+		ps->adap_strategy = SIMPLE;
+		return (run_simple);
+	}
 	if (ps->disorder < 0.2)
 	{
 		ps->adap_strategy = SIMPLE;
@@ -60,7 +65,7 @@ t_fn	select_strategy(t_ps *ps)
 
 void	dispatch_strategy(t_ps *ps)
 {
-	void	(*handlers[STRATEGY_COUNT])(t_ps *ps);
+	t_fn	handlers[STRATEGY_COUNT];
 
 	ps->disorder = calculate_disorder(ps->a);
 	handlers[SIMPLE] = run_simple;

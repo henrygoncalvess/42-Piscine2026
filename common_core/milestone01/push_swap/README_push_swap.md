@@ -1,5 +1,9 @@
 # 📚 Push Swap — Explicação Completa do Código
 
+> Atualizado para o subject Push_swap v1.1 (08/01/2026). O modo adaptativo
+> obrigatório usa `SIMPLE` para desordem abaixo de 20%, `MEDIUM` entre 20% e
+> 50%, e `COMPLEX` a partir de 50%.
+
 ## 📌 O que é o Push Swap?
 
 O Push Swap é um projeto da 42 onde você recebe uma lista de números inteiros desordenados na **stack A** e precisa ordená-los usando **apenas operações específicas**, com o menor número de operações possível. A **stack B** é usada como espaço auxiliar.
@@ -65,7 +69,7 @@ typedef struct s_node
 ```c
 typedef enum e_strategy
 {
-    SIMPLE,          // 0 → para ≤5 elementos ou desordem baixa
+    SIMPLE,          // 0 → algoritmo O(n²), usado em desordem baixa
     MEDIUM,          // 1 → chunk-based, bom para médios
     COMPLEX,         // 2 → quicksort adaptado, bom para grandes
     ADAPTIVE,        // 3 → decide automaticamente baseado na desordem
@@ -167,24 +171,26 @@ typedef struct s_ps
 
 ---
 
-### 1. [main.c](file:///home/hegoncal/Documents/push_swap/src/main.c)
+### 1. [main.c](src/main.c)
 
 ```c
 int main(int argc, char **argv)
 {
     t_ps ps;
 
-    ps = (t_ps){0};          // ① Zera TUDO (stacks, contadores, etc.)
-    ps.strategy = ADAPTIVE;  // ② Default: deixa o programa decidir
-    if (!parse_args(argc, argv, &ps))  // ③ Lê e valida argumentos
+    if (argc == 1)
+        return (0);          // ① Sem argumentos: nenhuma saída
+    init_ps(&ps);            // ② Zera stacks, contadores e flags
+    ps.strategy = ADAPTIVE;  // ③ Default: deixa o programa decidir
+    if (!parse_args(argc, argv, &ps))  // ④ Lê e valida argumentos
     {
         free_ps(&ps);
         write(STDERR_FILENO, "Error\n", 6);  // Se erro, imprime "Error"
         return (1);
     }
-    dispatch_strategy(&ps);  // ④ Executa o algoritmo de ordenação
+    dispatch_strategy(&ps);  // ⑤ Executa o algoritmo de ordenação
     if (ps.bench_mode)
-        print_bench(&ps);    // ⑤ Se --bench, imprime estatísticas
+        print_bench(&ps);    // ⑥ Se --bench, imprime estatísticas
     free_ps(&ps);
     return (0);
 }
@@ -192,11 +198,12 @@ int main(int argc, char **argv)
 
 **O que faz:** É o ponto de entrada. Inicializa tudo, parseia argumentos, ordena, e opcionalmente mostra benchmark.
 
-**Detalhe importante:** `ps = (t_ps){0}` é um truque em C para zerar toda a struct de uma vez. Sem isso, os contadores teriam lixo de memória.
+**Detalhe importante:** `init_ps()` zera toda a estrutura antes do parsing. Sem
+essa inicialização, os contadores e ponteiros conteriam valores indefinidos.
 
 ---
 
-### 2. [parse_args.c](file:///home/hegoncal/Documents/push_swap/src/parsing/parse_args.c)
+### 2. [parse_args.c](src/parsing/parse_args.c)
 
 #### `parse_args()` — Função principal do parsing
 
@@ -247,7 +254,7 @@ t_strategy parse_strategy(char *argv)
 
 ---
 
-### 3. [strategy_factory.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/strategy_factory.c) — O Cérebro da Decisão
+### 3. [strategy_factory.c](src/algorithms/strategy_factory.c) — O Cérebro da Decisão
 
 #### `calculate_disorder()` — Mede quão bagunçada a stack está
 
@@ -301,7 +308,7 @@ void dispatch_strategy(t_ps *ps)
 
 ---
 
-### 4. [simple.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/simple.c) — Algoritmo para Poucos Elementos
+### 4. [simple.c](src/algorithms/simple.c) — Algoritmo O(n²)
 
 ```c
 void run_simple(t_ps *ps)
@@ -318,7 +325,7 @@ void run_simple(t_ps *ps)
 
 ---
 
-### 5. [medium.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/medium.c) — Algoritmo Chunk-Based
+### 5. [medium.c](src/algorithms/medium.c) — Algoritmo Chunk-Based
 
 #### Ideia Geral
 
@@ -376,7 +383,7 @@ static void return_to_a(t_ps *ps)
 
 ---
 
-### 6. [complex.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/complex.c) — QuickSort para Stacks
+### 6. [complex.c](src/algorithms/complex.c) — QuickSort para Stacks
 
 #### Ideia Geral
 
@@ -443,7 +450,7 @@ Depois: pa para trazer de volta
 
 ---
 
-### 7. [base_three.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/base_three.c) — Caso Base: 3 Elementos
+### 7. [base_three.c](src/algorithms/base_three.c) — Caso Base: 3 Elementos
 
 #### `base_three_a()` — Ordena 3 em A (crescente)
 
@@ -473,7 +480,7 @@ Mesma lógica, mas invertida: procura o MENOR e ordena de forma decrescente (par
 
 ---
 
-### 8. [base_five.c](file:///home/hegoncal/Documents/push_swap/src/algorithms/base_five.c) — Caso Base: 5 Elementos
+### 8. [base_five.c](src/algorithms/base_five.c) — Caso Base: 5 Elementos
 
 #### `base_five_a()` — Ordena 5 em A
 
@@ -505,7 +512,7 @@ A: [1,2,3,4,5]    B: []     ✓ Ordenado!
 
 ---
 
-### 9. Operações — [ops_push_swap.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_push_swap.c), [ops_rotate.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_rotate.c), [ops_combo.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_combo.c)
+### 9. Operações — [ops_push_swap.c](src/operations/ops_push_swap.c), [ops_rotate.c](src/operations/ops_rotate.c), [ops_combo.c](src/operations/ops_combo.c)
 
 Todas as operações seguem o mesmo padrão:
 
@@ -537,7 +544,7 @@ void op_XX(t_ps *ps)
 
 ---
 
-### 10. [bench.c](file:///home/hegoncal/Documents/push_swap/src/bench/bench.c) — Benchmark
+### 10. [bench.c](src/bench/bench.c) — Benchmark
 
 ```c
 void print_bench(t_ps *ps)
@@ -597,153 +604,11 @@ void print_bench(t_ps *ps)
 
 ---
 
-## 🆕 Como Adicionar a Flag `--count-only`
-
-A flag `--count-only` deve mostrar **apenas o número total de operações** (sem imprimir as operações em si e sem o relatório completo do bench). Isso é perfeito para o livecoding, onde o avaliador quer ver rapidamente quantas operações foram usadas.
-
-**Resultado esperado:**
-```bash
-$ ./push_swap 3 1 4 2 5 --count-only
-5
-```
-
-(Em vez de imprimir `sa`, `pb`, `ra`, etc., imprime apenas o número `5`)
-
-### Passo a passo das alterações:
-
----
-
-### Passo 1: Adicionar campo `count_only` na struct `t_ps`
-
-**Arquivo:** [push_swap.h](file:///home/hegoncal/Documents/push_swap/includes/push_swap.h)
-
-```diff
- typedef struct s_ps
- {
-     t_node          *a;
-     t_node          *b;
-     int             size_a;
-     int             size_b;
-     float           disorder;
-     t_strategy      strategy;
-     t_strategy      adap_strategy;
-     int             bench_mode;
-+    int             count_only;
-     t_op_count      operations;
- }                   t_ps;
-```
-
----
-
-### Passo 2: Reconhecer `--count-only` no parser
-
-**Arquivo:** [parse_args.c](file:///home/hegoncal/Documents/push_swap/src/parsing/parse_args.c)
-
-Na função `parse_and_set_arg()`, adicionar o reconhecimento da nova flag:
-
-```diff
-     if (!is_valid_number(arg))
-     {
-         if (ft_strcmp(arg, "--bench") == 0)
-         {
-             ps->bench_mode = 1;
-             return (1);
-         }
-+        if (ft_strcmp(arg, "--count-only") == 0)
-+        {
-+            ps->count_only = 1;
-+            return (1);
-+        }
-         ps->strategy = parse_strategy(arg);
-         return (ps->strategy != STRATEGY_COUNT);
-     }
-```
-
----
-
-### Passo 3: Suprimir a impressão das operações quando `count_only` está ativo
-
-**Arquivo:** Em TODAS as funções de operação, o `ft_putstr_fd` precisa ser condicional.
-
-A forma mais limpa é **modificar cada operação** para verificar `count_only`. Nas operações em [ops_push_swap.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_push_swap.c), [ops_rotate.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_rotate.c) e [ops_combo.c](file:///home/hegoncal/Documents/push_swap/src/operations/ops_combo.c):
-
-**Exemplo para `op_sa`:**
-```diff
- void    op_sa(t_ps *ps)
- {
-     if (!ps || !ps->a || !ps->a->next)
-         return ;
-     stack_swap_top(&ps->a);
-     ps->operations.sa++;
--    ft_putstr_fd("sa\n", 1);
-+    if (!ps->count_only)
-+        ft_putstr_fd("sa\n", 1);
- }
-```
-
-> [!IMPORTANT]
-> Fazer essa mesma mudança em **TODAS as 11 operações**: `op_sa`, `op_sb`, `op_ss`, `op_pa`, `op_pb`, `op_ra`, `op_rb`, `op_rr`, `op_rra`, `op_rrb`, `op_rrr`.
-
----
-
-### Passo 4: Imprimir o número total de operações no `main()`
-
-**Arquivo:** [main.c](file:///home/hegoncal/Documents/push_swap/src/main.c)
-
-```diff
-     dispatch_strategy(&ps);
-     if (ps.bench_mode)
-         print_bench(&ps);
-+    if (ps.count_only)
-+    {
-+        ft_putnbr_fd(ps.operations.sa + ps.operations.sb + ps.operations.ss
-+            + ps.operations.pa + ps.operations.pb + ps.operations.ra
-+            + ps.operations.rb + ps.operations.rr + ps.operations.rra
-+            + ps.operations.rrb + ps.operations.rrr, 1);
-+        ft_putstr_fd("\n", 1);
-+    }
-     free_ps(&ps);
-```
-
-> [!TIP]
-> **Alternativa mais limpa:** Você pode expor a função `get_total_ops()` de [bench.c](file:///home/hegoncal/Documents/push_swap/src/bench/bench.c) removendo o `static` e adicionando o protótipo no header. Daí no main seria apenas:
-> ```c
-> if (ps.count_only)
-> {
->     ft_putnbr_fd(get_total_ops(&ps.operations), 1);
->     ft_putstr_fd("\n", 1);
-> }
-> ```
-
----
-
-### Resumo Visual da Alteração
-
-```
-Antes:
-  ./push_swap 3 1 2
-  → sa        (stdout)
-
-Com --bench:
-  ./push_swap 3 1 2 --bench
-  → sa        (stdout)
-  → [bench] disorder: 66.67%   (stderr)
-  → [bench] strategy: ...       (stderr)
-  → [bench] total_ops: 1        (stderr)
-  → [bench] sa: 1 sb: 0 ...    (stderr)
-
-Com --count-only:
-  ./push_swap 3 1 2 --count-only
-  → 1         (stdout, apenas o número)
-```
-
----
-
 ## 📊 Complexidade dos Algoritmos
 
 | Estratégia | Quando é usada | Complexidade | Operações esperadas (100 nums) | Operações esperadas (500 nums) |
 |-----------|----------------|-------------|-------------------------------|-------------------------------|
-| SIMPLE | ≤5 elementos ou disorder < 20% | O(n²) | N/A (só para ≤5) | N/A |
-| MEDIUM | disorder 20-50% | O(n√n) | ~700 | ~5500 |
-| COMPLEX | disorder ≥ 50% | O(n log n) | ~600 | ~4500 |
+| SIMPLE | disorder < 20% | O(n²) | depende da entrada | depende da entrada |
+| MEDIUM | disorder 20-50% | O(n√n) | tipicamente 600-700 | tipicamente 5500-6100 |
+| COMPLEX | disorder ≥ 50% | O(n log n) | ~1200 | ~8100 |
 | ADAPTIVE | Default | Escolhe o melhor | Varia | Varia |

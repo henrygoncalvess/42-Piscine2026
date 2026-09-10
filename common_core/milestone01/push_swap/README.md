@@ -31,8 +31,8 @@ The project uses the **Strategy Pattern** to dynamically select the most efficie
 Clone the repository and build the program with `make`:
 
 ```sh
-git clone https://github.com/pauloandrad/push-swap.git push_swap
-cd push_swap
+git clone https://github.com/henrygoncalvess/42sp.git
+cd 42sp/common_core/milestone01/push_swap
 make
 ```
 
@@ -77,15 +77,18 @@ The project implements the **Strategy Pattern** to select the sorting algorithm 
 
 | Strategy   | Condition                       | Algorithm             |
 | ---------- | ------------------------------- | --------------------- |
-| `SIMPLE`   | 5 or fewer elements            | Hard-coded base cases |
-| `MEDIUM`   | Disorder < 50%                 | Chunk Sort            |
-| `COMPLEX`  | Disorder ≥ 50%                 | Quick Sort            |
+| `SIMPLE`   | Forced with `--simple`          | Bubble/base cases     |
+| `MEDIUM`   | Forced with `--medium`          | Chunk Sort            |
+| `COMPLEX`  | Forced with `--complex`         | Quick Sort            |
+| `ADAPTIVE` | Default; uses disorder regimes  | Selects one above     |
 
-This adaptive approach guarantees optimal (or near-optimal) operation counts across all input sizes and disorder levels.
+`ADAPTIVE` follows the subject thresholds exactly: `SIMPLE` below 20% disorder,
+`MEDIUM` from 20% (inclusive) to 50%, and `COMPLEX` from 50% (inclusive).
 
-### Simple (≤ 5 elements)
+### Simple (`O(n²)`)
 
-For stacks with **3 or fewer** elements, a hard-coded `base_three` function handles all possible permutations in at most 2 operations.
+The simple strategy uses a bubble-style stack sort for general inputs. For stacks
+with exactly **3 elements**, a hard-coded `base_three` function handles all possible permutations in at most 2 operations.
 
 For stacks with **4 or 5** elements, a `base_five` function pushes the smallest elements to Stack B, sorts the remaining 3 with `base_three`, and pushes back — completing in at most 12 operations.
 
@@ -97,7 +100,8 @@ The Chunk Sort algorithm transfers elements from Stack A to Stack B in fixed-siz
 2. For each chunk window, the algorithm scans Stack A. If the top element's rank falls within the current chunk range, it is pushed to Stack B. Otherwise, Stack A is rotated.
 3. After all elements are in Stack B, the algorithm finds the maximum element in Stack B and brings it back to Stack A in sorted order by rotating or reverse-rotating Stack B as needed.
 
-This strategy performs well on partially sorted data and achieves approximately **~5 500 – 5 800** operations on 500 random elements.
+This strategy performs well on partially sorted data. Actual operation counts vary
+with both the input and the strategy selected by `ADAPTIVE`.
 
 ### Quick Sort (`COMPLEX` strategy)
 
@@ -108,7 +112,9 @@ The Quick Sort operates recursively using a **pivot-based partition**:
 3. The algorithm recursively partitions both halves until segments are reduced to 2 or 3 elements, which are resolved with direct swaps.
 4. Once all sub-segments are sorted, elements are pushed back from Stack B to Stack A in order.
 
-Quick Sort excels on heavily disordered inputs because it always isolates the smaller half regardless of the initial arrangement.
+Quick Sort provides the required O(n log n) strategy for highly disordered inputs.
+It prioritizes the required complexity class; it is not always the strategy with the
+lowest constant operation count for 500 values.
 
 ### Justification
 
@@ -149,7 +155,8 @@ Quick Sort excels on heavily disordered inputs because it always isolates the sm
 - [push_swap tutorial — A journey to find most efficient sorting algorithm](https://medium.com/@ayogun/push-swap-c1f5d2d41e97) — popular walkthrough of the push_swap problem and the Chunk Sort approach.
 - [Quick Sort — Wikipedia](https://en.wikipedia.org/wiki/Quicksort) — reference on the pivot-based partition algorithm.
 - [Visualgo — Sorting Algorithms](https://visualgo.net/en/sorting) — interactive visualization of sorting algorithms.
-- 42's own `push_swap` subject and Norm documentation.
+- Push_swap subject version 1.1, supplied by the 42 intra (8 January 2026).
+- [42 Norminette](https://github.com/42School/norminette) — official style checker.
 
 ### Use of AI
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pahenriq <pahenriq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hegoncal <hegoncal@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 13:43:28 by pahenriq          #+#    #+#             */
-/*   Updated: 2026/08/23 21:08:02 by pahenriq         ###   ########.fr       */
+/*   Updated: 2026/09/09 22:50:09 by hegoncal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,36 @@ void	free_ps(t_ps *ps)
 	stack_clear(&ps->b);
 }
 
+void	init_ps(t_ps *ps)
+{
+	ps->a = NULL;
+	ps->b = NULL;
+	ps->size_a = 0;
+	ps->size_b = 0;
+	ps->disorder = 0.0;
+	ps->strategy = 0;
+	ps->adap_strategy = 0;
+	ps->bench_mode = 0;
+	ps->operations.sa = 0;
+	ps->operations.sb = 0;
+	ps->operations.ss = 0;
+	ps->operations.pa = 0;
+	ps->operations.pb = 0;
+	ps->operations.ra = 0;
+	ps->operations.rb = 0;
+	ps->operations.rr = 0;
+	ps->operations.rra = 0;
+	ps->operations.rrb = 0;
+	ps->operations.rrr = 0;
+}
+
 int	main(int argc, char **argv)
 {
 	t_ps	ps;
 
-	ps = (t_ps){0};
+	if (argc == 1)
+		return (0);
+	init_ps(&ps);
 	ps.strategy = ADAPTIVE;
 	if (!parse_args(argc, argv, &ps))
 	{

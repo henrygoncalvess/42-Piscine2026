@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pahenriq <pahenriq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hegoncal <hegoncal@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 19:21:40 by pahenriq          #+#    #+#             */
-/*   Updated: 2026/08/23 14:58:53 by pahenriq         ###   ########.fr       */
+/*   Updated: 2026/09/10 18:56:38 by hegoncal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,14 +89,17 @@ int	parse_args(int argc, char **argv, t_ps *ps)
 	int		j;
 	char	**args;
 
-	if (argc <= 1)
-		return (0);
 	i = 1;
 	while (i < argc)
 	{
 		args = ft_split(argv[i], ' ');
 		if (!args)
 			return (0);
+		if (!args[0])
+		{
+			free(args);
+			return (0);
+		}
 		j = 0;
 		while (args[j])
 		{

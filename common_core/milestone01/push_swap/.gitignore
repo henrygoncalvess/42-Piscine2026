@@ -8,10 +8,6 @@ custom_tests
 compile_flags.txt
 
 .vscode
-.claude/settings.json
-#.claude
-#.debug
-#.docs
 
 en.*
 

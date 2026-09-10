@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pahenriq <pahenriq@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hegoncal <hegoncal@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/09 12:59:35 by pahenriq          #+#    #+#             */
-/*   Updated: 2026/08/23 15:53:26 by pahenriq         ###   ########.fr       */
+/*   Updated: 2026/09/09 21:34:38 by hegoncal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,6 @@ typedef enum e_strategy
 	ADAPTIVE,
 	STRATEGY_COUNT
 }					t_strategy;
-
-typedef enum e_chunk
-{
-	LOW,
-	HIGH,
-	CHUNK_COUNT
-}					t_chunk_strategy;
 
 typedef struct s_op_count
 {
